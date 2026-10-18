@@ -1,19 +1,23 @@
-import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useCart } from './context/CartContext'
 
-function ProductCard(props) {
-  const [count, setCount] = useState(0)
+function ProductCard({ product }) {
+  const { addToCart } = useCart()
+  const navigate = useNavigate()
+
+  function handleAdd() {
+    addToCart(product)
+    navigate('/cart')
+  }
 
   return (
     <article className="product-card">
       <div className="product-image">
-        <img src={props.image} alt={props.name} />
+        <img src={product.image} alt={product.name} />
       </div>
-      <h2>{props.name}</h2>
-      <p className="price">{props.price}</p>
-      <button onClick={() => setCount(count + 1)}>
-        Добавить в корзину
-      </button>
-      <p className="count">В корзине: {count}</p>
+      <h2>{product.name}</h2>
+      <p className="price">{product.price.toLocaleString('ru-RU')} ₽</p>
+      <button onClick={handleAdd}>В корзину</button>
     </article>
   )
 }

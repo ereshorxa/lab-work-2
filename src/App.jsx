@@ -1,30 +1,53 @@
-import ProductCard from './ProductCard'
+import { BrowserRouter, NavLink, Navigate, Route, Routes } from 'react-router-dom'
+import { CartProvider, useCart } from './context/CartContext'
+import { ThemeProvider, useTheme } from './context/ThemeContext'
+import CatalogPage from './pages/CatalogPage'
+import CartPage from './pages/CartPage'
+import LoginPage from './pages/LoginPage'
+import DashboardPage from './pages/DashboardPage'
 import './App.css'
+
+function AppContent() {
+  const { cart } = useCart()
+  const { theme, toggleTheme } = useTheme()
+  const navClass = ({ isActive }) => `nav-link${isActive ? ' active' : ''}`
+
+  return (
+    <div className={`app ${theme}`}>
+      <header className="header">
+        <NavLink className="logo" to="/">GameGear</NavLink>
+        <nav className="navigation">
+          <NavLink className={navClass} to="/">Каталог</NavLink>
+          <NavLink className={navClass} to="/cart">Корзина ({cart.length})</NavLink>
+          <NavLink className={navClass} to="/login">Вход</NavLink>
+        </nav>
+        <button className="theme-button" onClick={toggleTheme}>
+          {theme === 'light' ? 'Тёмная тема' : 'Светлая тема'}
+        </button>
+      </header>
+
+      <main className="page">
+        <Routes>
+          <Route path="/" element={<CatalogPage />} />
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </main>
+    </div>
+  )
+}
 
 function App() {
   return (
-    <main className="shop">
-      <h1>Магазин игровых девайсов</h1>
-      <p className="subtitle">Выбери всё необходимое для игры</p>
-
-      <div className="products">
-        <ProductCard
-          name="Игровая мышь"
-          price="3 490 ₽"
-          image="/device.svg"
-        />
-        <ProductCard
-          name="Механическая клавиатура"
-          price="6 990 ₽"
-          image="/device.svg"
-        />
-        <ProductCard
-          name="Игровые наушники"
-          price="4 590 ₽"
-          image="/device.svg"
-        />
-      </div>
-    </main>
+    <BrowserRouter>
+      <ThemeProvider>
+        <CartProvider>
+          <AppContent />
+        </CartProvider>
+      </ThemeProvider>
+    </BrowserRouter>
   )
 }
 
